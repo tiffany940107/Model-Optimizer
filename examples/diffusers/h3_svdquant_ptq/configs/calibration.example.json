@@ -1,0 +1,28 @@
+{
+  "format": "h3-ptq-requests-v1",
+  "purpose": "calibration",
+  "requests": [
+    {
+      "id": "calibration-01",
+      "prompt": "The referenced ceramic cup sits on a wooden table. The camera slowly moves around it in soft morning light.",
+      "seed": 42,
+      "reference_images": ["images/your-calibration-cup.png"],
+      "seconds": 5,
+      "short_edge": 768,
+      "aspect_ratio": "16:9",
+      "num_inference_steps": 50,
+      "expected_dit_calls": 49
+    },
+    {
+      "id": "calibration-02",
+      "prompt": "The referenced sailboat gently crosses a quiet lake. Ripples spread behind it under a cloudy sky.",
+      "seed": 43,
+      "reference_images": ["images/your-calibration-boat.png"],
+      "seconds": 5,
+      "short_edge": 768,
+      "aspect_ratio": "16:9",
+      "num_inference_steps": 50,
+      "expected_dit_calls": 49
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+diff --git a/python/sglang/multimodal_gen/runtime/models/dits/minimax_h3.py b/python/sglang/multimodal_gen/runtime/models/dits/minimax_h3.py
+--- a/python/sglang/multimodal_gen/runtime/models/dits/minimax_h3.py
++++ b/python/sglang/multimodal_gen/runtime/models/dits/minimax_h3.py
+@@ -1202,6 +1202,12 @@
+                 f"rope.inv_freq must stay fp32 after load, got {rope_inv_freq.dtype}."
+             )
+ 
++        # Optional example integration; ordinary inference has no ModelOpt dependency.
++        import os
++        if os.environ.get("H3_MODELOPT_PTQ_CONFIG"):
++            from portable_sglang import install
++            install(self)
++
+     @staticmethod
+     def _pos_ids(pos_info: Any, key: str) -> torch.Tensor:
+         if isinstance(pos_info, dict):

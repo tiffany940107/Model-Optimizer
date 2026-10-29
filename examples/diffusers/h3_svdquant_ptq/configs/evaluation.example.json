@@ -1,0 +1,17 @@
+{
+  "format": "h3-ptq-requests-v1",
+  "purpose": "evaluation",
+  "requests": [
+    {
+      "id": "evaluation-01",
+      "prompt": "The referenced red toy train moves along its track in a bright room. The camera follows at eye level.",
+      "seed": 44,
+      "reference_images": ["images/your-evaluation-train.png"],
+      "seconds": 5,
+      "short_edge": 768,
+      "aspect_ratio": "16:9",
+      "num_inference_steps": 50,
+      "expected_dit_calls": 49
+    }
+  ]
+}
