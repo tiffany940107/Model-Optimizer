@@ -7,11 +7,18 @@ or a self-contained H3 inference engine. No ModelOpt core files are modified.
 
 ## Version and scope
 
-The tested base is ModelOpt commit
-`881cacdbeed36ab3ca16c4cb8bc56606a42329c9` from the
-[`jingyu-ml/Model-Optimizer` fork](https://github.com/jingyu-ml/Model-Optimizer).
-This branch intentionally preserves that base; compatibility with current
-upstream main has not been established.
+This PTQ-only branch is based on commit
+`9392dfeabfde8695e9f58421c551ea8004fc3a1a` of
+[`tiffany940107/Model-Optimizer`](https://github.com/tiffany940107/Model-Optimizer).
+Only this example directory is added; QAD training code, upstream workflow
+changes, and unrelated experiments are not included.
+
+All 61 CPU tests passed against this base, including the separately supplied,
+hash-bound legacy oracle. Full pre-commit checks are run on the added files.
+Historical GPU measurements below used the earlier Jingyu branch commit
+`881cacdbeed36ab3ca16c4cb8bc56606a42329c9`; GPU and full-generation equivalence
+have **not** been rerun on this fork-main base. The measured compatibility recipe
+is preserved, but CPU success alone does not transfer that GPU acceptance.
 
 The selector targets the original H3 Ref2VA architecture, **not** the separate
 FastH3 V2 QAD implementation:

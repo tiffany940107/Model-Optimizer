@@ -1,6 +1,8 @@
 {
   "schema": "h3-modelopt-svdquant-ptq-compat-v1",
-  "modelopt_revision": "881cacdbeed36ab3ca16c4cb8bc56606a42329c9",
+  "modelopt_revision": "9392dfeabfde8695e9f58421c551ea8004fc3a1a",
+  "historical_gpu_modelopt_revision": "881cacdbeed36ab3ca16c4cb8bc56606a42329c9",
+  "branch_validation": "61 CPU tests passed on fork-main base; GPU and full generation on this base not rerun",
   "modelopt_mode": "h3_svdquant_legacy_v1",
   "legacy_gpu_runtime": {
     "python": "3.12",
