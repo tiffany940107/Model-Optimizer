@@ -1,0 +1,68 @@
+{
+  "schema": "h3-modelopt-svdquant-ptq-compat-v1",
+  "modelopt_revision": "881cacdbeed36ab3ca16c4cb8bc56606a42329c9",
+  "modelopt_mode": "h3_svdquant_legacy_v1",
+  "legacy_gpu_runtime": {
+    "python": "3.12",
+    "torch": "2.11.0+cu130",
+    "cuda": "13.0",
+    "initial_gpu": "SM100/B200",
+    "qad_torch_2_12": "must not load the legacy TRT library",
+    "svd_ab": "same device, torch, CUDA/cuBLAS, seed and RNG consumption order"
+  },
+  "legacy_core_sha256": "87914ea08ea6a6a486ef9697d728a947290f604cbfe8ccaa658b6ad0281196ad",
+  "legacy_exporter_sha256": "2a8716ada829b33d410486742a384f20ab6c6387e1d20bfe2a74e896bf4f8dbe",
+  "scope": {
+    "main_blocks": 50,
+    "token_refiner_blocks": 2,
+    "projections": ["attn.qkv_proj", "attn.out_proj", "mlp.fc1", "mlp.fc2"],
+    "linear_count": 208,
+    "excluded": ["AdaLN", "boundary projections", "text encoder", "VAE", "audio codec", "attention QK/softmax/PV"],
+    "adapter_boundary": "plain BF16 torch.nn.Linear; direct SGLang module replacement not yet integrated"
+  },
+  "factor_recipe": {
+    "input_absmax_dtype": "float32",
+    "smoothing": "clamp(weight_column_absmax**0.5 / activation_absmax**0.5, 1/16, 16)",
+    "span_floor": 1e-8,
+    "svd_input": "weight.float() / unrounded_smoothing.float()",
+    "svd": "torch.svd_lowrank float32",
+    "rank": 32,
+    "oversample": 8,
+    "niter": 2,
+    "residual": "smoothed_weight - FP32(B @ A), then BF16 cast",
+    "smoothing_and_factors_storage": "bfloat16",
+    "seed": "current exporter: 1101 + ordinal in list(merged_stats['activation_absmax']); rank0 insertion order; slice keeps absolute ordinal",
+    "different_legacy_path": "in-process SGLang ensure_prepared seeds once then consumes RNG continuously; not the packed-export golden",
+    "not_equivalent_by_default": "ModelOpt algorithm=svdquant uses AWQ and full SVD; not invoked here",
+    "gptq_block_aware": "not regenerated in v1; frozen factors can be imported"
+  },
+  "nvfp4": {
+    "block_size": 16,
+    "data": "E2M1",
+    "block_scale": "E4M3",
+    "legacy_global_multiplier": "2688 / amax.clamp_min(1e-12)",
+    "input_amax": "max(calibration_absmax * rounded_BF16_smoothing.float())",
+    "residual_amax": "absmax(BF16 residual)",
+    "alpha": "1 / (input_multiplier * residual_multiplier)",
+    "cpu_reference": "real upstream NVFP4QTensor pack/dequant + BF16 GEMMs, not CUDA GEMM",
+    "layout": "ModelOpt linear scales and legacy TRT swizzled scales are distinct",
+    "tie_boundary": "ModelOpt packer ties-to-even differs from core.fake_nvfp4 ties-to-low-magnitude",
+    "zero_small_scales": "ModelOpt clamps scale to >=2^-9 and <=448; whole-model CUDA equivalence unverified",
+    "native_candidate_export": "NVFP4QTensor actual pack -> linear E4M3 scales swizzled to TRT; global dequant converted to multiplier; differences measured, not silently replaced",
+    "known_dequant_rounding_counterexample": "global_dequant FP32 bits954204160, block_scale240, E2M1=-3: native -0.0771484375 vs reciprocal TRT -0.07666015625 after BF16"
+  },
+  "acceptance": {
+    "cpu_recipe": "exact same-device factors against legacy implementation",
+    "frozen_state": "exact tensor/dtype and supplied packed-byte preservation through ModelOpt save/restore",
+    "gpu_gold": "legacy static_6 TRT fp4_quantize + TRTNVFP4SVDQuantLinearMethod",
+    "gpu_reference": "ArtifactFakeSVDQuantLinearMethod isolates packed quantization from fused GEMM rounding",
+    "whole_model": "historical compatibility export: 208 layers and one matched 124-frame Ref2VA evaluation exact; raw private evidence not distributed, not a new GPU validation of this branch",
+    "quality_claim": "compatibility with legacy PTQ on the measured case only; no BF16 perceptual equivalence or generalization claim"
+  },
+  "streaming_gates": {
+    "packed_only_mode": "h3_svdquant_packed_replay_v1: no dense residual stored and native forward fails closed; intermediate storage/export gate only",
+    "bound_recipe": "validated original Ref2VA global rank32 alpha.5 static6 RTN; GPTQ/block-aware rejected by v1 whole-artifact driver",
+    "native_path": "real ModelOpt dense SVDQuantLinear save/restore + weight/input TensorQuantizer + NVFP4QTensor candidate export, one layer at a time",
+    "progress": "historical compatibility regeneration passed 208-layer and one full-generation comparison; native/default ModelOpt equivalence not established"
+  }
+}

@@ -1,0 +1,18 @@
+# Dependency inventory only: do not pip-install into the customer's/QAD venv.
+# Create an independent Python 3.12 + torch 2.11.0+cu130 environment first.
+# Derived from fixed ModelOpt SHA 881cacd pyproject.toml; not a resolved GPU lock.
+# torch intentionally omitted: retain the exact ABI-compatible installed wheel.
+ninja
+numpy
+nvidia-ml-py>=12
+omegaconf>=2.3.0
+packaging
+pulp<4.0
+pydantic>=2.0
+PyYAML>=6.0
+regex
+rich
+safetensors
+scipy
+setuptools>=80
+tqdm
