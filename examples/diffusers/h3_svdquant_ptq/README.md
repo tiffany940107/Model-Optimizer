@@ -212,9 +212,9 @@ or existing results are not silently overwritten.
 
 Compare full video/audio, reference appearance, motion and temporal continuity.
 Latent/RGB distance gains do not guarantee subjective quality or improvement in
-every modality. The original experiment had held-out regressions, so this recipe
-is not automatically promoted to a general default. Timing recorded here includes
-audit overhead/cold effects and is not a production speedup benchmark.
+every modality. This recipe is not automatically a general default, and timing
+recorded by the renderer includes audit overhead and is not a production
+speedup benchmark.
 
 ### 5. Optional sequential reproduction script
 
@@ -237,31 +237,12 @@ where required; do not delete or fabricate validation receipts.
 
 ## Validation and publication boundary
 
-On 2026-11-05, the packaged `init`, `calibrate`, `export-baseline`, `reconstruct`,
-`export-frozen` and both `render` modes were rerun on one B200. The run used the
-same two fitting/development conditioning caches and one separate three-reference
-evaluation cache (seed42, 768x1344, 124 frames) as the original local experiment.
-It regenerated the artifacts rather than importing historical success receipts.
-
-- Calibration statistics and both BF16 teachers matched the original files.
-- All 208 baseline and Frozen packed payloads matched exactly. The same 207 B
-  updates were selected, and all 52 full-block gates passed.
-- BF16 and Frozen final latents and MP4 files matched their respective original
-  outputs byte for byte. Independent CPU checks also compared all 124 decoded
-  RGB frames and decoded audio samples: both were exact for each mode.
-- Frozen executed eight NFEs, with two BF16 and six NVFP4 calls for each of the
-  208 groups, BF16 indices0/5 and no group fallback.
-- Before this minimal branch was extracted, the original PTQ example and Frozen
-  CPU tests passed together (101 tests), including the required legacy oracle;
-  applicable pre-commit checks passed. This branch keeps only the relevant subset
-  of shared-helper tests and all Frozen tests, not the unrelated SGLang tests.
-
-This establishes integration parity for those fixed inputs, not broad quality
-acceptance, a performance claim or support for other environments. The encoding
-entry point was not GPU-rerun in this reproduction: it started from existing,
-trusted conditioning caches. No input prompts, images, caches, generated videos
-or test receipts are distributed with this example. Rerun the full sequence on
-your own inputs in a matching environment before deployment.
+No input prompts, images, caches, generated videos, receipts or measured results
+are distributed with this example, and none are claimed here. Rerun the full
+sequence on your own inputs in a matching environment, and evaluate quality and
+performance independently, before any deployment decision. The encoding entry
+point and the GPU stages require a matching environment and are not covered by
+the CPU tests below.
 
 ```bash
 PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}" \
