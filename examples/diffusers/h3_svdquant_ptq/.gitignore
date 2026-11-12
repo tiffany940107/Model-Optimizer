@@ -1,0 +1,23 @@
+# Code-only handoff. Runtime receipts and user inputs never belong in Git.
+*.md
+!README.md
+*.json
+*.jsonl
+*.log
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.mp4
+*.wav
+*.png
+*.jpg
+*.jpeg
+*.zip
+*.so
+__pycache__/
+.pytest_cache/
+results/
+outputs/
+cache/
+runs/
